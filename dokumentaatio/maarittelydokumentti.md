@@ -9,7 +9,6 @@ Minimax algoritmia käytetään tekoälyn siirtojen valitsemiseen. Sen tarkoituk
 #### Algoritmin aikavaativuus: Minimax algoritmiin käytetty aika kasvaa exponentiaalisesti, jokaisen mahdollisen siirron jälkeen, joten se on O(n^2).
 ### Tietorakenteet: Matriisi taulukko pelitilanteesta
 Matriisi taulukko pitää yllä vapaista paikoista pelinappuloille, ja missä mikäkin nappula sijaitsee.
-
 #### Lähteet:
 ###### [Wikipedia](https://en.wikipedia.org/wiki/Minimax)
 ###### [Tira-labra](https://tiralabra.github.io/2023_p4/fi/aiheet/minimax.pdf)
