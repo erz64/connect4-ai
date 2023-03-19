@@ -10,5 +10,6 @@ Minimax algoritmia käytetään tekoälyn siirtojen valitsemiseen. Sen tarkoituk
 ### Tietorakenteet: Matriisi taulukko pelitilanteesta
 Matriisi taulukko pitää yllä vapaista paikoista pelinappuloille, ja missä mikäkin nappula sijaitsee.
 
-#### Lähteet: ###### [Wikipedia](https://en.wikipedia.org/wiki/Minimax)
+#### Lähteet:
+###### [Wikipedia](https://en.wikipedia.org/wiki/Minimax)
 ###### [Tira-labra](https://tiralabra.github.io/2023_p4/fi/aiheet/minimax.pdf)
