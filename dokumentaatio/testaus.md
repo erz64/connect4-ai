@@ -2,4 +2,4 @@
 
 ## Testauskattavuus
 
-![](./kuvat/testikattavuus.png)
+![](./kuvat/testikattavuus_26.3.png)
