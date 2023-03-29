@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 from board import GameBoard
+from ai import Ai
 class GameControl:
     """Class that controls the game
 
@@ -18,16 +19,21 @@ class GameControl:
         self.buttons = self._get_buttons()
         self.test = test
         self._font_1 = pygame.font.SysFont("arial", 24)
+        self.ai = Ai()
 
     def main_menu(self, won=False):
         """ Main menu where player can start the game"""
     
-        button_text = self._font_1.render("Start game!", True, (0, 0, 0))
-        winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
+        button_text1 = self._font_1.render("Start game against another player!", True, (0, 0, 0))
+        button_text2 = self._font_1.render("Start game against AI", True, (0, 0, 0))
+        winner_text = self._font_1.render(f"{won} won", True, (255, 255, 255))
         self._display.fill((0, 0, 0))
         button1 = pygame.draw.rect(
-            self._display, (0, 200, 87), [450, 300, 130, 50])
-        self._display.blit(button_text, button1)
+            self._display, (0, 200, 87), [600, 300, 300, 50])
+        self._display.blit(button_text1, button1)
+        button3 = pygame.draw.rect(
+            self._display, (0, 200, 87), [200, 300, 300, 50])
+        self._display.blit(button_text2, button3)
         if won:
             if won == "red won the game":
                 button2 = pygame.draw.rect(
@@ -47,16 +53,19 @@ class GameControl:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1 and button1.collidepoint((x, y)):
                         start = True
-        
-        self.start()
+                        opponent = "player"
+                    if event.button == 1 and button3.collidepoint((x, y)):
+                        start = True
+                        opponent = "AI"
+        self.start(opponent)
     
-    def start(self):
+    def start(self, opponent):
         """Gets called when the program starts,
         starts the game
         """
         self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         turn = "red"
-        while True:
+        while opponent == "player":
             pygame.display.update()
             self._clock.tick(60)
             self._display.fill((0, 0, 0))
@@ -67,7 +76,31 @@ class GameControl:
             self._draw_pieces()
             if self.test:
                 break
+        while opponent == "AI":
+            pygame.display.update()
+            self._clock.tick(60)
+            self._display.fill((0, 0, 0))
+            self.buttons.draw(self._display)
+            if turn == "red":
+                turn = self._player_inputs(turn)
+                if turn not in ["red", "yellow"]:
+                    break
+            if turn == "yellow":
+                board = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
+                for i in range(0, len(self.board.pieces)):
+                    for j in range(0, len(self.board.pieces[i])):
+                        board[i][j] = self.board.pieces[i][j]
+                col = self.ai.choose_move(board)
+                row = self.board.check_free_space(col, self.board.pieces)
+                self.board.place_piece(col, row, "yellow", self.board.pieces)
+                won = self.board.check_for_win(col, row, turn, self.board.pieces)
+                if won:
+                    break
+                turn = "red"
+            self._draw_pieces()
+            
         self.main_menu(turn)
+
     def _draw_pieces(self):
         """Draws each players' pieces on the display window
         """
@@ -130,100 +163,12 @@ class GameControl:
             return turn
         else:
             self.board.place_piece(col, row, turn, self.board.pieces)
-            won = self.check_for_win(col, row, turn)
+            won = self.board.check_for_win(col, row, turn, self.board.pieces)
         if won:
             return f"{turn} won the game"
         if turn == "red":
             return "yellow"
         return "red"
-
-    
-    def check_for_win(self, col, row, turn):
-        print(row)
-        win = [self._check_vertical_win(col, row, turn), self._check_horizontal_win(col, row, turn),
-            self._check_diagonal_win_left_to_right(col, row, turn), self._check_diagonal_win_right_to_left(col, row, turn)]
-        if True in win:
-            return True
-            
-
-    def _check_vertical_win(self, col, row, turn):
-        count = 1
-        # upwards
-        for i in range(1, row):
-            if self.board.pieces[col][row-i] != turn:
-                break
-            else:
-                count += 1 
-        # downwards
-        for i in range(1, 6-row):
-            if self.board.pieces[col][row+i] != turn:
-                break
-            else:
-                count += 1
-        if count >= 4:
-            return True
-        return False
-
-    def _check_horizontal_win(self, col, row, turn):
-        count = 1
-        
-        # left
-        for i in range(1, col+1):
-            if self.board.pieces[col-i][row] != turn:
-                break
-            else:
-                count += 1
-        # right
-        for i in range(1, 7-col):
-            if self.board.pieces[col+i][row] != turn:
-                break
-            else:
-                count += 1
-        print(col)
-        if count >= 4:
-            return True
-        return False
-
-    def _check_diagonal_win_left_to_right(self, col, row, turn):
-        count = 1
-        # smaller is the one closest to the edge
-        smaller = min(col+1, 6-row)
-        # left and down
-        for i in range(1, smaller):
-            if self.board.pieces[col-i][row+i] != turn:
-                break
-            else:
-                count += 1
-        smaller = min(row, 7-col)
-        # right and up
-        for i in range(1, smaller):
-            if self.board.pieces[col+i][row-i] != turn:
-                break
-            else:
-                count += 1
-        if count >= 4:
-            return True
-        return False
-    def _check_diagonal_win_right_to_left(self, col, row, turn):
-        count = 1
-        # smaller is the one closest to the edge
-        smaller = min(col+1, row)
-        # left and up
-        for i in range(1, smaller):
-            if self.board.pieces[col-i][row-i] != turn:
-                break
-            else:
-                count += 1
-        smaller = min(6-row, 7-col)
-        # right and down
-        for i in range(1, smaller):
-            if self.board.pieces[col+i][row+i] != turn:
-                break
-            else:
-                count += 1
-        if count >= 4:
-            return True
-        return False
 
     def _get_buttons(self):
         """Initialize buttons for to place a piece in the game
