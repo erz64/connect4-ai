@@ -26,7 +26,7 @@ class GameControl:
     
         button_text1 = self._font_1.render("Start game against another player!", True, (0, 0, 0))
         button_text2 = self._font_1.render("Start game against AI", True, (0, 0, 0))
-        winner_text = self._font_1.render(f"{won} won", True, (255, 255, 255))
+        winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
         self._display.fill((0, 0, 0))
         button1 = pygame.draw.rect(
             self._display, (0, 200, 87), [600, 300, 300, 50])
@@ -35,7 +35,7 @@ class GameControl:
             self._display, (0, 200, 87), [200, 300, 300, 50])
         self._display.blit(button_text2, button3)
         if won:
-            if won == "red won the game":
+            if won == "red won":
                 button2 = pygame.draw.rect(
                 self._display, (255, 0, 0), [450, 100, 200, 50])
             else:
@@ -91,10 +91,13 @@ class GameControl:
                     for j in range(0, len(self.board.pieces[i])):
                         board[i][j] = self.board.pieces[i][j]
                 col = self.ai.choose_move(board)
+                if col == None:
+                    break
                 row = self.board.check_free_space(col, self.board.pieces)
                 self.board.place_piece(col, row, "yellow", self.board.pieces)
-                won = self.board.check_for_win(col, row, turn, self.board.pieces)
+                won = self.board.check_for_win(col, row, turn, self.board.pieces)[0]
                 if won:
+                    turn = "yellow won the game"
                     break
                 turn = "red"
             self._draw_pieces()
@@ -163,9 +166,9 @@ class GameControl:
             return turn
         else:
             self.board.place_piece(col, row, turn, self.board.pieces)
-            won = self.board.check_for_win(col, row, turn, self.board.pieces)
+            won = self.board.check_for_win(col, row, turn, self.board.pieces)[0]
         if won:
-            return f"{turn} won the game"
+            return f"{turn} won"
         if turn == "red":
             return "yellow"
         return "red"

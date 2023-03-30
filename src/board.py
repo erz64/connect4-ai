@@ -12,10 +12,10 @@ class GameBoard:
     def check_free_space(self, col, board):
         """Checks where there is free space available for the players piece
         Args:
-            col (int): Which button was pressed
+            col (int): Which column to check on
             board (list): Which board to check on
         Returns:
-            row (int), the row to place the piece on
+            row (int), the row where there is free space
         """
         row = 0
         for piece in board[col]:
@@ -28,8 +28,8 @@ class GameBoard:
         win = [self._check_vertical_win(col, row, turn, board), self._check_horizontal_win(col, row, turn, board),
             self._check_diagonal_win_left_to_right(col, row, turn, board), self._check_diagonal_win_right_to_left(col, row, turn, board)]
         if True in win:
-            return True
-        return False
+            return (True, turn)
+        return (False, turn)
             
 
     def _check_vertical_win(self, col, row, turn, board):
@@ -46,9 +46,11 @@ class GameBoard:
                 break
             else:
                 count += 1
+        
         if count >= 4:
             return True
         return False
+
 
     def _check_horizontal_win(self, col, row, turn, board):
         count = 1
