@@ -10,10 +10,10 @@ class GameBoard:
         """Places a piece on the board
 
         Args:
-            x (_type_): _description_
-            y (_type_): _description_
-            color (_type_): _description_
-            board (_type_): _description_
+            col (int): On which column to place the piece on
+            row (int): On which row to place the piece on
+            color (str): What color is the place to place
+            board (list): On which board to place the piece on
         """
         board[col][row] = color
         
@@ -33,6 +33,18 @@ class GameBoard:
         return row-1
     
     def check_for_win(self, col, row, turn, board):
+        """Checks if the newly placed piece results in a win
+
+        Args:
+            col (int): Which column to check for
+            row (int): Which row to check for
+            turn (str): Which turn was the piece placed on
+            board (list): On which board to check for a win
+
+        Returns:
+            won(Bool), turn(str): Won is true if piece placed resulted in a win otherwise False.
+            turn which turn was the piece placed on
+        """
         win = [self._check_vertical_win(col, row, turn, board), self._check_horizontal_win(col, row, turn, board),
             self._check_diagonal_win_left_to_right(col, row, turn, board), self._check_diagonal_win_right_to_left(col, row, turn, board)]
         if True in win:
@@ -41,6 +53,17 @@ class GameBoard:
             
 
     def _check_vertical_win(self, col, row, turn, board):
+        """Checks if the newly placed piece results in a win, forming a vertical 4 in a row
+
+        Args:
+            col (int): Which column to check for
+            row (int): Which row to check for
+            turn (str): Which turn was the piece placed on
+            board (list): On which board to check for a win
+
+        Returns:
+            won(bool): True if it resulted in a vertical 4 in a row, otherwise False
+        """
         count = 1
         # upwards
         for i in range(1, row):
@@ -61,6 +84,17 @@ class GameBoard:
 
 
     def _check_horizontal_win(self, col, row, turn, board):
+        """Checks if the newly placed piece results in a win, forming a horizontal 4 in a row
+
+        Args:
+            col (int): Which column to check for
+            row (int): Which row to check for
+            turn (str): Which turn was the piece placed on
+            board (list): On which board to check for a win
+
+        Returns:
+            won(bool): True if it resulted in a horizontal 4 in a row, otherwise False
+        """
         count = 1
         # left
         for i in range(1, col+1):
@@ -79,6 +113,19 @@ class GameBoard:
         return False
 
     def _check_diagonal_win_left_to_right(self, col, row, turn, board):
+        """Checks if the newly placed piece results in a win,
+        forming a diagonal 4 in a row from left to right
+
+        Args:
+            col (int): Which column to check for
+            row (int): Which row to check for
+            turn (str): Which turn was the piece placed on
+            board (list): On which board to check for a win
+
+        Returns:
+            won(bool): True if it resulted in a diagonal 4 in a row
+            from left to right, otherwise False
+        """
         count = 1
         # smaller is the one closest to the edge
         smaller = min(col+1, 6-row)
@@ -100,6 +147,19 @@ class GameBoard:
         return False
 
     def _check_diagonal_win_right_to_left(self, col, row, turn, board):
+        """Checks if the newly placed piece results in a win,
+        forming a diagonal 4 in a row from right to left
+
+        Args:
+            col (int): Which column to check for
+            row (int): Which row to check for
+            turn (str): Which turn was the piece placed on
+            board (list): On which board to check for a win
+
+        Returns:
+            won(bool): True if it resulted in a diagonal 4 in a row
+            from right to left, otherwise False
+        """
         count = 1
         # smaller is the one closest to the edge
         smaller = min(col+1, row)

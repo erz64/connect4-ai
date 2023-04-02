@@ -17,6 +17,7 @@ class GameControl:
         font: Font for the button texts
     """
     def __init__(self, display, event_queue, ai, test=False):
+        pygame.init()
         self.dirname = os.path.dirname(__file__)
         self._event_queue = event_queue
         self._display = display
@@ -45,10 +46,10 @@ class GameControl:
         if won:
             if won == "red won":
                 button2 = pygame.draw.rect(
-                self._display, (255, 0, 0), [450, 100, 200, 50])
+                self._display, (255, 0, 0), [450, 100, 300, 50])
             else:
                 button2 = pygame.draw.rect(
-                self._display, (255,255,0), [450, 100, 200, 50])
+                self._display, (255,255,0), [450, 100, 300, 50])
             self._display.blit(self.winner_text, button2)
         pygame.display.update()
         start = False
@@ -116,8 +117,12 @@ class GameControl:
                     turn = "yellow won the game"
                     break
                 turn = "red"
+                if self.test:
+                    break
             self._draw_pieces()
-        self.main_menu(turn)
+
+        if not self.test:
+            self.main_menu(turn)
         
 
     def _draw_pieces(self):
