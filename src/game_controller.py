@@ -2,38 +2,46 @@ import pygame
 import sys
 import os
 from board import GameBoard
-from ai import Ai
+
+
 class GameControl:
     """Class that controls the game
 
     Attributes:
         board: List of each players pieces in the game
-        display: Pygames display for the game window
-        clock: Pygames clock which handles time in the game
+        display: Pygame's display for the game window
+        ai: Class for the computer's moves
+        dirname: Where the files are located in the system
+        buttons: Buttons for players to press when they want to drop a piece
+        test: If this class is run in test settings
+        font: Font for the button texts
     """
-    def __init__(self, display, event_queue, test=False):
+    def __init__(self, display, event_queue, ai, test=False):
         self.dirname = os.path.dirname(__file__)
         self._event_queue = event_queue
         self._display = display
-        self._clock = pygame.time.Clock()
-        self.buttons = self._get_buttons()
+        self.buttons = self._get_drop_piece_buttons()
         self.test = test
         self._font_1 = pygame.font.SysFont("arial", 24)
-        self.ai = Ai()
+        self.ai = ai
+        
 
     def main_menu(self, won=False):
-        """ Main menu where player can start the game"""
-    
-        button_text1 = self._font_1.render("Start game against another player!", True, (0, 0, 0))
-        button_text2 = self._font_1.render("Start game against AI", True, (0, 0, 0))
-        winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
+        """Main menu where player can start the game
+
+        Args:
+            won (bool, optional): Tells who won the game. Defaults to False.
+        """
+        self.button_text1 = self._font_1.render("Start game against another player!", True, (0, 0, 0))
+        self.button_text2 = self._font_1.render("Start game against AI", True, (0, 0, 0))
+        self.winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
         self._display.fill((0, 0, 0))
-        button1 = pygame.draw.rect(
+        self.button1 = pygame.draw.rect(
             self._display, (0, 200, 87), [600, 300, 300, 50])
-        self._display.blit(button_text1, button1)
-        button3 = pygame.draw.rect(
+        self.button3 = pygame.draw.rect(
             self._display, (0, 200, 87), [200, 300, 300, 50])
-        self._display.blit(button_text2, button3)
+        self._display.blit(self.button_text1, self.button1)
+        self._display.blit(self.button_text2, self.button3)
         if won:
             if won == "red won":
                 button2 = pygame.draw.rect(
@@ -41,33 +49,41 @@ class GameControl:
             else:
                 button2 = pygame.draw.rect(
                 self._display, (255,255,0), [450, 100, 200, 50])
-            self._display.blit(winner_text, button2)
+            self._display.blit(self.winner_text, button2)
         pygame.display.update()
         start = False
         while not start:
-            x, y = pygame.mouse.get_pos()
-            for event in self._event_queue.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1 and button1.collidepoint((x, y)):
-                        start = True
-                        opponent = "player"
-                    if event.button == 1 and button3.collidepoint((x, y)):
-                        start = True
-                        opponent = "AI"
+            (start, opponent) = self.main_menu_inputs()
         self.start(opponent)
     
+    def main_menu_inputs(self):
+        start = False
+        opponent = None
+        x, y = pygame.mouse.get_pos()
+        for event in self._event_queue.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and self.button1.collidepoint((x, y)):
+                    start = True
+                    opponent = "player"
+                if event.button == 1 and self.button3.collidepoint((x, y)):
+                    start = True
+                    opponent = "AI"
+        return (start, opponent)
+
     def start(self, opponent):
         """Gets called when the program starts,
         starts the game
+
+        Args:
+            opponent (str): tells the game are you playing against computer or a human
         """
         self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         turn = "red"
         while opponent == "player":
             pygame.display.update()
-            self._clock.tick(60)
             self._display.fill((0, 0, 0))
             self.buttons.draw(self._display)
             turn = self._player_inputs(turn)
@@ -78,7 +94,6 @@ class GameControl:
                 break
         while opponent == "AI":
             pygame.display.update()
-            self._clock.tick(60)
             self._display.fill((0, 0, 0))
             self.buttons.draw(self._display)
             if turn == "red":
@@ -92,6 +107,7 @@ class GameControl:
                         board[i][j] = self.board.pieces[i][j]
                 col = self.ai.choose_move(board)
                 if col == None:
+                    turn = "draw"
                     break
                 row = self.board.check_free_space(col, self.board.pieces)
                 self.board.place_piece(col, row, "yellow", self.board.pieces)
@@ -101,8 +117,8 @@ class GameControl:
                     break
                 turn = "red"
             self._draw_pieces()
-            
         self.main_menu(turn)
+        
 
     def _draw_pieces(self):
         """Draws each players' pieces on the display window
@@ -140,8 +156,7 @@ class GameControl:
     
     def _check_if_button_pressed(self, turn):
         """Checks if a button was pressed,
-        and calls for check free space,
-        to check if there is space for a new piece
+        and calls for button pressed function then
 
         Args:
             turn (str): Tells which players turn it is
@@ -161,6 +176,17 @@ class GameControl:
         return turn
 
     def _button_pressed(self, col, turn):
+        """ When drop piece button was pressed,
+        this is called, places a piece on the board, and checks for win
+
+        Args:
+            col (int): On which column to drop the piece and check for win
+            turn (str): Tells next players turn, or if someone won
+            
+
+        Returns:
+            turn (str): returns the next player or the player who won
+        """
         row = self.board.check_free_space(col, self.board.pieces)
         if row < 0:
             return turn
@@ -173,7 +199,7 @@ class GameControl:
             return "yellow"
         return "red"
 
-    def _get_buttons(self):
+    def _get_drop_piece_buttons(self):
         """Initialize buttons for to place a piece in the game
         Returns:
             buttons (list): List of buttons to be used to place a piece

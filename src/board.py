@@ -6,8 +6,16 @@ class GameBoard:
     def __init__(self, board=[["blank","blank","blank","blank","blank","blank"] for _ in range(7)]):
         self.pieces = board
     
-    def place_piece(self, x, y, color, board):
-        board[x][y] = color
+    def place_piece(self, col, row, color, board):
+        """Places a piece on the board
+
+        Args:
+            x (_type_): _description_
+            y (_type_): _description_
+            color (_type_): _description_
+            board (_type_): _description_
+        """
+        board[col][row] = color
         
     def check_free_space(self, col, board):
         """Checks where there is free space available for the players piece
