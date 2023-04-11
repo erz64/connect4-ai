@@ -22,11 +22,11 @@ class Ai:
         Returns:
             move (int): the column on which the Ai places a piece
         """
-        data = self.minimax(5, True, board)
+        data = self.minimax(8, True, board)
         move = data[0]
         return move
 
-    def minimax(self, depth, maximising, board, col=None, row=None, alpha=0, beta=0, turn="yellow"):
+    def minimax(self, depth, maximising, board, col=None, row=None, alpha=-math.inf, beta=math.inf, turn="yellow", count=0):
         """The algorithm for the Ai to figure out the optimal move in the current situation
 
         Args:
@@ -35,26 +35,31 @@ class Ai:
             board (list): The locations of pieces in the game board
             col (int, optional): On which column is the algorithm checkin on. Defaults to None.
             row (int, optional): On which row is the algorithm checkin on. Defaults to None.
-            alpha (int, optional): Used to optize the algorithm. Defaults to 0.
-            beta (int, optional): Used to optize the algorithm. Defaults to 0.
+            alpha (int, optional): Used to optize the algorithm. Defaults to -infinity.
+            beta (int, optional): Used to optize the algorithm. Defaults to infinity.
             turn (str, optional): Which player's turn is at the state of the algorithm. Defaults to "yellow".
+            count (int, optional): How many times it took to reach the current state. Used to prefer moves over others.
 
         Returns:
             move(int), value(int): the best column to place the piece on, and value for which was achieved using the algorithm
         """
         locations = self.get_valid_locations(board)
-        if col != None and row != None:
-            (won, player) = self.board.check_for_win(col, row, turn, board)
+        
+        if col != None and row != None: # Checks if called for the first time
+            (won, player, score) = self.board.check_for_win(col, row, turn, board)
         else:
             won = False
         if depth == 0 or won:
             if won:
                 if player == "yellow":
-                    return (None, 100000)
+                    return (None, 100000-count)
                 else:
-                    return (None, -100000)
+                    return (None, -100000+count)
             else:
-                return (None, 0)
+                if player == "yellow":
+                    return (None, score)
+                else:
+                    return (None, -score)
         if len(locations) == 0:
             return (None, 0)
         new_col = random.choice(locations)
@@ -64,15 +69,15 @@ class Ai:
                 row = self.board.check_free_space(col, board)
                 if row < 0:
                     continue
-                copy = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
-                for i in range(0, len(board)):
-                    for j in range(0, len(board[i])):
-                        copy[i][j] = board[i][j]
+                copy = self.board.copy_board(board)
                 self.board.place_piece(col, row, "yellow", copy)
-                new_value = self.minimax(depth-1, False, copy, col, row, alpha, beta, "yellow")[1]
+                new_value = self.minimax(depth-1, False, copy, col, row, alpha, beta, "yellow", count+1)[1]
                 if new_value > value:
                     new_col = col
                     value = new_value
+                alpha = max(alpha, value)
+                if value >= beta:
+                    break
             return new_col, value
         else:
             value = math.inf
@@ -80,15 +85,15 @@ class Ai:
                 row = self.board.check_free_space(col, board)
                 if row < 0:
                     continue
-                copy = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
-                for i in range(0, len(board)):
-                    for j in range(0, len(board[i])):
-                        copy[i][j] = board[i][j]
+                copy = self.board.copy_board(board)
                 self.board.place_piece(col, row, "red", copy)
-                new_value = self.minimax(depth-1, True, copy, col, row, alpha, beta, "red")[1]
+                new_value = self.minimax(depth-1, True, copy, col, row, alpha, beta, "red", count+1)[1]
                 if new_value < value:
                     new_col = col
                     value = new_value
+                beta = min(beta, value)
+                if value <= alpha:
+                    break
             return new_col, value
                     
     
@@ -103,11 +108,12 @@ class Ai:
             locations(list): List of valid columns to place pieces
         """
         locations = []
-        for i in range(7):
-            row = self.board.check_free_space(i, board)
+        for col in range(7):
+            row = self.board.check_free_space(col, board)
             if row < 0:
                 continue
-            locations.append(i)
+            locations.append(col)
         return locations
+    
     
         

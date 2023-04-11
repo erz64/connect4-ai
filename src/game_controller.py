@@ -33,23 +33,26 @@ class GameControl:
         Args:
             won (bool, optional): Tells who won the game. Defaults to False.
         """
-        self.button_text1 = self._font_1.render("Start game against another player!", True, (0, 0, 0))
-        self.button_text2 = self._font_1.render("Start game against AI", True, (0, 0, 0))
+        self.start_player_text = self._font_1.render("Start game against another player!", True, (0, 0, 0))
+        self.start_ai_text = self._font_1.render("Start game against AI", True, (0, 0, 0))
         self.winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
         self._display.fill((0, 0, 0))
         self.button1 = pygame.draw.rect(
             self._display, (0, 200, 87), [600, 300, 300, 50])
         self.button3 = pygame.draw.rect(
             self._display, (0, 200, 87), [200, 300, 300, 50])
-        self._display.blit(self.button_text1, self.button1)
-        self._display.blit(self.button_text2, self.button3)
+        self._display.blit(self.start_player_text, self.button1)
+        self._display.blit(self.start_ai_text, self.button3)
         if won:
             if won == "red won":
                 button2 = pygame.draw.rect(
-                self._display, (255, 0, 0), [450, 100, 300, 50])
-            else:
+                self._display, (255, 0, 0), [450, 100, 100, 50])
+            if won == "yellow won":
                 button2 = pygame.draw.rect(
-                self._display, (255,255,0), [450, 100, 300, 50])
+                self._display, (255,255,0), [450, 100, 150, 50])
+            else: # Draw
+                button2 = pygame.draw.rect(
+                self._display, (0,0,255), [450, 100, 150, 50])
             self._display.blit(self.winner_text, button2)
         pygame.display.update()
         start = False
@@ -83,9 +86,12 @@ class GameControl:
         """
         self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         turn = "red"
+        self._display.fill((0, 0, 0))
         while opponent == "player":
+            if self.board.check_for_draw(self.board.pieces):
+                turn = "draw"
+                break
             pygame.display.update()
-            self._display.fill((0, 0, 0))
             self.buttons.draw(self._display)
             turn = self._player_inputs(turn)
             if turn not in ["red", "yellow"]:
@@ -95,21 +101,17 @@ class GameControl:
                 break
         while opponent == "AI":
             pygame.display.update()
-            self._display.fill((0, 0, 0))
             self.buttons.draw(self._display)
+            if self.board.check_for_draw(self.board.pieces):
+                turn = "draw"
+                break
             if turn == "red":
                 turn = self._player_inputs(turn)
                 if turn not in ["red", "yellow"]:
                     break
             if turn == "yellow":
-                board = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
-                for i in range(0, len(self.board.pieces)):
-                    for j in range(0, len(self.board.pieces[i])):
-                        board[i][j] = self.board.pieces[i][j]
+                board = self._copy_board()
                 col = self.ai.choose_move(board)
-                if col == None:
-                    turn = "draw"
-                    break
                 row = self.board.check_free_space(col, self.board.pieces)
                 self.board.place_piece(col, row, "yellow", self.board.pieces)
                 won = self.board.check_for_win(col, row, turn, self.board.pieces)[0]
@@ -123,7 +125,13 @@ class GameControl:
 
         if not self.test:
             self.main_menu(turn)
-        
+
+    def _copy_board(self):
+        board = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
+        for i in range(0, len(self.board.pieces)):
+            for j in range(0, len(self.board.pieces[i])):
+                board[i][j] = self.board.pieces[i][j]
+        return board
 
     def _draw_pieces(self):
         """Draws each players' pieces on the display window
@@ -158,7 +166,7 @@ class GameControl:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 turn = self._check_if_button_pressed(turn)
         return turn
-    
+
     def _check_if_button_pressed(self, turn):
         """Checks if a button was pressed,
         and calls for button pressed function then
@@ -210,11 +218,11 @@ class GameControl:
             buttons (list): List of buttons to be used to place a piece
         """
         buttons = pygame.sprite.Group()
-        for i in range(7):
+        for col in range(7):
             button = pygame.sprite.Sprite()
             button.image = pygame.image.load(os.path.join(self.dirname, "assets", "arrow_button.png"))
             button.rect = button.image.get_rect()
-            button.rect.center = (i*150+50, 100)
+            button.rect.center = (col*150+50, 100)
             buttons.add(button)
         return buttons
     
