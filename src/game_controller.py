@@ -25,6 +25,7 @@ class GameControl:
         self.test = test
         self._font_1 = pygame.font.SysFont("arial", 24)
         self.ai = ai
+        self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         
 
     def main_menu(self, won=False):
@@ -50,10 +51,11 @@ class GameControl:
             if won == "yellow won":
                 button2 = pygame.draw.rect(
                 self._display, (255,255,0), [450, 100, 150, 50])
-            else: # Draw
+            if won == "draw":
                 button2 = pygame.draw.rect(
                 self._display, (0,0,255), [450, 100, 150, 50])
             self._display.blit(self.winner_text, button2)
+        self._draw_pieces()
         pygame.display.update()
         start = False
         while not start:
@@ -116,7 +118,7 @@ class GameControl:
                 self.board.place_piece(col, row, "yellow", self.board.pieces)
                 won = self.board.check_for_win(col, row, turn, self.board.pieces)[0]
                 if won:
-                    turn = "yellow won the game"
+                    turn = "yellow won"
                     break
                 turn = "red"
                 if self.test:

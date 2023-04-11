@@ -1,6 +1,5 @@
 import pygame
 from game_controller import GameControl
-from board import GameBoard
 from event_queue import EventQueue
 from ai import Ai
 
