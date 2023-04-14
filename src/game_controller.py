@@ -103,7 +103,6 @@ class GameControl:
             if self.test:
                 break
         while opponent == "AI":
-
             pygame.display.update()
             self.buttons.draw(self._display)
             if self.board.check_for_draw(self.board.pieces):

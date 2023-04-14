@@ -6,6 +6,7 @@ class TestAi(unittest.TestCase):
     def setUp(self):
         self.ai = Ai()
         self.board = GameBoard()
+
     def test_ai_finds_a_win_in_one_move(self):
         pieces = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
         self.board.place_piece(0, 5, "yellow", pieces)
