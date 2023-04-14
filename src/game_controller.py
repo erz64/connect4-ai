@@ -51,9 +51,9 @@ class GameControl:
                 self._display, (0,0,255), [450, 100, 150, 50])
             self._display.blit(self.winner_text, button2)
         self.button1 = pygame.draw.rect(
-            self._display, (0, 200, 87), [600, 300, 300, 50])
+            self._display, (0, 200, 87), [500, 300, 400, 50])
         self.button3 = pygame.draw.rect(
-            self._display, (0, 200, 87), [200, 300, 300, 50])
+            self._display, (0, 200, 87), [100, 300, 300, 50])
         self._display.blit(self.start_player_text, self.button1)
         self._display.blit(self.start_ai_text, self.button3)
         
@@ -103,6 +103,7 @@ class GameControl:
             if self.test:
                 break
         while opponent == "AI":
+
             pygame.display.update()
             self.buttons.draw(self._display)
             if self.board.check_for_draw(self.board.pieces):
