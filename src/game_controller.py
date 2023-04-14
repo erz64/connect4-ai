@@ -38,13 +38,8 @@ class GameControl:
         self.start_ai_text = self._font_1.render("Start game against AI", True, (0, 0, 0))
         self.winner_text = self._font_1.render(f"{won}", True, (255, 255, 255))
         self._display.fill((0, 0, 0))
-        self.button1 = pygame.draw.rect(
-            self._display, (0, 200, 87), [600, 300, 300, 50])
-        self.button3 = pygame.draw.rect(
-            self._display, (0, 200, 87), [200, 300, 300, 50])
-        self._display.blit(self.start_player_text, self.button1)
-        self._display.blit(self.start_ai_text, self.button3)
         if won:
+            self._draw_pieces()
             if won == "red won":
                 button2 = pygame.draw.rect(
                 self._display, (255, 0, 0), [450, 100, 100, 50])
@@ -55,7 +50,13 @@ class GameControl:
                 button2 = pygame.draw.rect(
                 self._display, (0,0,255), [450, 100, 150, 50])
             self._display.blit(self.winner_text, button2)
-        self._draw_pieces()
+        self.button1 = pygame.draw.rect(
+            self._display, (0, 200, 87), [600, 300, 300, 50])
+        self.button3 = pygame.draw.rect(
+            self._display, (0, 200, 87), [200, 300, 300, 50])
+        self._display.blit(self.start_player_text, self.button1)
+        self._display.blit(self.start_ai_text, self.button3)
+        
         pygame.display.update()
         start = False
         while not start:

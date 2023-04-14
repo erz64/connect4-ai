@@ -99,8 +99,6 @@ class GameBoard:
         """
         total_score = 0
         for count in counts:
-            if count == 1:
-                total_score += 1
             if count == 2:
                 total_score += 5
             if count == 3:

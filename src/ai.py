@@ -44,7 +44,7 @@ class Ai:
             move(int), value(int): the best column to place the piece on, and value for which was achieved using the algorithm
         """
         locations = self.get_valid_locations(board)
-        
+
         if col != None and row != None: # Checks if called for the first time
             (won, player, score) = self.board.check_for_win(col, row, turn, board)
         else:
