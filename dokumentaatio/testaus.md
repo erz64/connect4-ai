@@ -1,7 +1,7 @@
 # Testausdokumentti
 
 ## Testauskattavuus
-
+vanha kuva muokkaan ensi viikolla uudeksi
 ![](./kuvat/testikattavuus_2.4.png)
 
 
