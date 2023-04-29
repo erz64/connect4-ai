@@ -90,6 +90,12 @@ class GameControl:
         self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         turn = "red"
         self._display.fill((0, 0, 0))
+        self.board.place_piece(2, 5, "red", self.board.pieces)
+        self.board.place_piece(2, 4, "yellow", self.board.pieces)
+        self.board.place_piece(3, 5, "yellow", self.board.pieces)
+        self.board.place_piece(4, 5, "red", self.board.pieces)
+        self.board.place_piece(4, 4, "yellow", self.board.pieces)
+        self.board.place_piece(4, 3, "red", self.board.pieces)
         while opponent == "player":
             if self.board.check_for_draw(self.board.pieces):
                 turn = "draw"
@@ -112,7 +118,7 @@ class GameControl:
                 turn = self._player_inputs(turn)
                 if turn not in ["red", "yellow"]:
                     break
-            if turn == "yellow":
+            elif turn == "yellow":
                 board = self._copy_board()
                 col = self.ai.choose_move(board)
                 row = self.board.check_free_space(col, self.board.pieces)

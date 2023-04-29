@@ -12,7 +12,8 @@ class TestAi(unittest.TestCase):
         self.board.place_piece(0, 5, "yellow", pieces)
         self.board.place_piece(1, 5, "yellow", pieces)
         self.board.place_piece(2, 5, "yellow", pieces)
-        self.assertEqual(self.ai.choose_move(pieces), 3)
+        correct_move = 3
+        self.assertEqual(self.ai.choose_move(pieces), correct_move)
     
     def test_ai_finds_a_forced_win_in_7_moves(self):
         pieces = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
@@ -43,4 +44,17 @@ class TestAi(unittest.TestCase):
         self.board.place_piece(6, 5, "red", pieces)
         
         move = self.ai.choose_move(pieces)
-        self.assertEqual(move, 6)
+        correct_move = 6
+        self.assertEqual(move, correct_move)
+    
+    def test_ai_denies_player_win(self):
+        pieces = [["blank","blank","blank","blank","blank","blank"] for _ in range(7)]
+        self.board.place_piece(1, 5, "red", pieces)
+        self.board.place_piece(1, 4, "red", pieces)
+        self.board.place_piece(1, 3, "red", pieces)
+
+        move = self.ai.choose_move(pieces)
+        correct_move = 1
+        self.assertEqual(move, correct_move)
+    
+  

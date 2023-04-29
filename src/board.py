@@ -82,7 +82,6 @@ class GameBoard:
 
         win = [vertical_win, horizontal_win, diagonal_left_to_right_win, diagonal_right_to_left_win]
         counts = [vertical_count, horizontal_count, diagonal_left_to_right_count, diagonal_right_to_left_count]
-
         total_score = self._get_total_score(counts)
         if True in win:
             return (True, turn, total_score)
