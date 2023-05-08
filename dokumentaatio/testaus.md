@@ -17,3 +17,4 @@ Tässä tilanne, jossa Ai:n pitää löytää siirto 7 liikkeessä:
 Eli Ai:n pitää laittaa viimeiselle sarakkeelle pallo, jotta se pakottaa lopulta pelaajan laittamaan ensimmäiselle tai viidennelle sarakkeelle pallon, joka johtaa Ai:n voittoon. On myös testattu, että Ai osaa estää pelaajan voiton, jonka pelaaja saisi muuten ensi vuorolla.
 
 ## Testien suorittaminen
+Testit voidaan suorittaa poetryn avulla komennolla ```poetry run invoke test```. Testeistä saa luotua coverage kattavuuden komennolla ```poetry run invoke coverage``` ja kattavuusraportin komennolla ```poetry run invoke coverage_report```.
