@@ -90,12 +90,6 @@ class GameControl:
         self.board = GameBoard([["blank","blank","blank","blank","blank","blank"] for _ in range(7)])
         turn = "red"
         self._display.fill((0, 0, 0))
-        self.board.place_piece(2, 5, "red", self.board.pieces)
-        self.board.place_piece(2, 4, "yellow", self.board.pieces)
-        self.board.place_piece(3, 5, "yellow", self.board.pieces)
-        self.board.place_piece(4, 5, "red", self.board.pieces)
-        self.board.place_piece(4, 4, "yellow", self.board.pieces)
-        self.board.place_piece(4, 3, "red", self.board.pieces)
         while opponent == "player":
             if self.board.check_for_draw(self.board.pieces):
                 turn = "draw"
